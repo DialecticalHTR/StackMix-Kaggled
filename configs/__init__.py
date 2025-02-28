@@ -12,6 +12,8 @@ from .patzig import PatzigConfig
 from .ricordi import RicordiConfig
 from .schiller import SchillerConfig
 
+from .cyrillic import CyrillicConfig
+
 CONFIGS = {
     'bentham': BenthamConfig,
     'peter': PeterConfig,
@@ -25,4 +27,5 @@ CONFIGS = {
     'patzig': PatzigConfig,
     'ricordi': RicordiConfig,
     'schiller': SchillerConfig,
+    'cyrillic': CyrillicConfig
 }

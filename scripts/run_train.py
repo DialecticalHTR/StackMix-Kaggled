@@ -2,7 +2,7 @@
 import argparse
 import sys
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 
 import neptune
 import torch
@@ -28,14 +28,14 @@ from src.stackmix import StackMix  # noqa
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Run train script.')
-    parser.add_argument('--checkpoint_path', type=str)
+    parser.add_argument('--checkpoint_path', type=str, nargs='?', const='')
     parser.add_argument('--experiment_name', type=str)
     parser.add_argument('--use_augs', type=int)
     parser.add_argument('--use_blot', type=int)
     parser.add_argument('--use_stackmix', type=int)
     parser.add_argument('--neptune_project', type=str)
     parser.add_argument('--neptune_token', type=str)
-    parser.add_argument('--data_dir', type=str)
+    parser.add_argument('--data_dir', type=str, default="../StackMix-OCR-DATA")
     parser.add_argument('--mwe_tokens_dir', type=str)
     parser.add_argument('--output_dir', type=str)
     parser.add_argument('--experiment_description', type=str)
@@ -50,11 +50,12 @@ if __name__ == '__main__':
     parser.add_argument('--use_pretrained_backbone', type=int, default=1)
 
     args = parser.parse_args()
+    print(args)
 
     assert args.dataset_name in CONFIGS
 
     if args.checkpoint_path:
-        seed = round(datetime.utcnow().timestamp()) % 10000  # warning! in resume need change seed
+        seed = round(datetime.now.now(timezone.utc).timestamp()) % 10000  # warning! in resume need change seed
     else:
         seed = args.seed
 

@@ -4,17 +4,21 @@
 applied to the standalone task of generating handwritten text based on printed text.
 
 ## Config file
-Create a new config file need  in ```configs/__init__.py```.
+
+Create a new config file need in `configs/__init__.py`.
 An individual config file is required for each dataset.
 
 ## Datasets
 
 ### There are two ways to get a dataset:
+
 #### The first way:
+
 Download a dataset and annotations (for example Bentham: http://www.transcriptorium.eu/~tsdata/BenthamR0/). Prepare dataset and create marking.csv file
 
-####  The second way:
-Downlad prepared dataset using the script ```download_dataset.py``` (for example Bentham: ```python scripts/download_dataset.py --dataset_name=bentham```)
+#### The second way:
+
+Downlad prepared dataset using the script `download_dataset.py` (for example Bentham: `python scripts/download_dataset.py --dataset_name=bentham`)
 And now you can use train script.
 
 You can change out folder by key --data_dir='your path', by default --data_dir=../StackMix-OCR-DATA.
@@ -23,6 +27,7 @@ All dataset names: bentham, peter, hkr, iam.
 ### Dataset format
 
 The dataset should contain a directory with images and a csv file `marking.csv` with annotations. The csv file must contain the "stage" field with information about which sample the image belongs to `(train / valid / test)`. An example of the structure and content of a csv file is given below
+
 ```
 sample_id,path,stage,text
 270-01,washington/images/270-01.png,train,"270. Letters, Orders and Instructions. October 1755."
@@ -34,11 +39,13 @@ sample_id,path,stage,text
 ## Setup
 
 install requirements:
+
 ```
 pip install -r requirements.txt -f https://download.pytorch.org/whl/torch_stable.html
 ```
 
 ## Example run train
+
 ```
 python scripts/run_train.py \
     --checkpoint_path "" \
@@ -60,6 +67,7 @@ python scripts/run_train.py \
 ```
 
 ## Example run evaluation
+
 ```
 python scripts/run_evaluation.py \
     --experiment_folder "exp/" \
@@ -71,6 +79,7 @@ python scripts/run_evaluation.py \
 ```
 
 ## Generating all_char_masks.json for stackmix
+
 ```
 python scripts/prepare_char_masks.py \
     --checkpoint_path "exp/HKR_exp/best_cer.pt" \
@@ -92,7 +101,6 @@ Example of generating images with stackmix
 
 ![Example of generating images](https://sun9-64.userapi.com/impg/xAFmDnVuuTmc4FM_FKhLPnq-KvrppD4x-DvUKg/hy1qKbRbS58.jpg?size=402x305&quality=96&sign=5bdfa7702f2e655cc991e274d4bb7b3f&type=album)
 
-
 ## Supported by:
 
 - Sber
@@ -100,10 +108,10 @@ Example of generating images with stackmix
 - Sirius University
 - RZHD
 
-
 ## Citation
 
 Please cite the related works in your publications if it helps your research:
+
 ```
 @inproceedings{10.1145/3476887.3476892,
 author = {Mark, Potanin and Denis, Dimitrov and Alex, Shonenkov and Vladimir, Bataev and Denis, Karachev and Maxim, Novopoltsev and Andrey, Chertok},
@@ -130,7 +138,6 @@ location = {Lausanne, Switzerland},
 series = {HIP '21}
 }
 ```
-
 
 ## Contacts
 
