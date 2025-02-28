@@ -48,6 +48,8 @@ if __name__ == '__main__':
     parser.add_argument('--seed', type=int, default=6955)
     parser.add_argument('--use_progress_bar', type=int, default=0)
     parser.add_argument('--use_pretrained_backbone', type=int, default=1)
+    parser.add_argument('--save_experiment', action="store_true")
+    parser.add_argument('--save_path', type=str, nargs='?', const='')
 
     args = parser.parse_args()
 
@@ -227,6 +229,9 @@ if __name__ == '__main__':
             neptune=neptune_kwargs.get('neptune'),
             ctc_labeling=ctc_labeling,
         )
+    
+    if args.save_experiment and args.save_path:
+        experiment.save(args.save_path)
 
     time_inference = []
     for best_metric in ['best_cer', 'best_wer', 'best_acc', 'last']:
