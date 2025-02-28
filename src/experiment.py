@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import datetime
+from datetime import datetime, timezone
 
 import torch
 from tpu_star.experiment import TorchGPUExperiment
@@ -105,7 +105,7 @@ class OCRExperiment(TorchGPUExperiment):
         experiment.verbose = False
         for e in range(experiment.epoch + 1):
             system_metrics = experiment.system_metrics.metrics[e].avg
-            experiment._log(f'\n{datetime.utcnow().isoformat()}\nlr: {system_metrics["lr"]}')
+            experiment._log(f'\n{datetime.now(timezone.utc).isoformat()}\nlr: {system_metrics["lr"]}')
             # #
             metrics = experiment.metrics.train_metrics[e].avg
             experiment._log(f'Train epoch {e}, time: {system_metrics["train_epoch_time"]}s', **metrics)
