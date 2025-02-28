@@ -38,3 +38,88 @@ class OCRExperiment(TorchGPUExperiment):
             self.optimizer_step()
             self.optimizer.zero_grad()
             self.scheduler.step()
+    
+    # Janky hack attempt
+    # https://discuss.pytorch.org/t/lr-scheduler-onecyclelr-causing-tried-to-step-57082-times-the-specified-number-of-total-steps-is-57080/90083/7
+    @classmethod
+    def resume(
+        cls,
+        model,
+        optimizer,
+        scheduler,
+        criterion,
+        device,
+        checkpoint_path,
+        train_loader,
+        valid_loader,
+        n_epochs,
+        neptune=None,
+        seed=None,
+        **kwargs,
+    ):
+        checkpoint = torch.load(checkpoint_path)
+        experiment_state_dict = checkpoint['experiment_state_dict']
+        neptune_state_dict = checkpoint['neptune_state_dict']
+
+        experiment_name = 'R+' + experiment_state_dict['experiment_name']
+
+        experiment = cls(
+            model=model,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            criterion=criterion,
+            device=device,
+            rank=experiment_state_dict['rank'],
+            seed=experiment_state_dict['seed'] if seed is None else seed,
+            verbose=experiment_state_dict['verbose'],
+            verbose_end=experiment_state_dict['verbose_end'],
+            verbose_ndigits=experiment_state_dict['verbose_ndigits'],
+            verbose_step=experiment_state_dict['verbose_step'],
+            use_progress_bar=experiment_state_dict['use_progress_bar'],
+            base_dir=experiment_state_dict['base_dir'],
+            jupyters_path=experiment_state_dict['jupyters_path'],
+            notebook_name=experiment_state_dict['notebook_name'],
+            experiment_name=experiment_name,
+            neptune=None,
+            neptune_params=neptune_state_dict['params'],
+            best_saving=experiment_state_dict['best_saving'],
+            last_saving=experiment_state_dict['last_saving'],
+            low_memory=experiment_state_dict.get('low_memory', True),
+            **kwargs
+        )
+
+        experiment.epoch = experiment_state_dict['epoch']
+        experiment.model.load_state_dict(checkpoint['model_state_dict'])
+        experiment.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+
+        sheduler_dict = checkpoint['scheduler_state_dict']
+        sheduler_dict['total_steps'] = sheduler_dict['total_steps'] + n_epochs * int(len(train_loader))
+        experiment.scheduler.load_state_dict(sheduler_dict)
+        experiment.metrics.load_state_dict(checkpoint['metrics_state_dict'])
+        experiment.system_metrics.load_state_dict(checkpoint['system_metrics_state_dict'])
+
+        experiment._init_neptune(neptune)
+
+        experiment.verbose = False
+        for e in range(experiment.epoch + 1):
+            system_metrics = experiment.system_metrics.metrics[e].avg
+            experiment._log(f'\n{datetime.utcnow().isoformat()}\nlr: {system_metrics["lr"]}')
+            # #
+            metrics = experiment.metrics.train_metrics[e].avg
+            experiment._log(f'Train epoch {e}, time: {system_metrics["train_epoch_time"]}s', **metrics)
+            experiment._log_neptune('train', **metrics)
+            # #
+            metrics = experiment.metrics.valid_metrics[e].avg
+            experiment._log(f'Valid epoch {e}, time: {system_metrics["valid_epoch_time"]}s', **metrics)
+            experiment._log_neptune('valid', **metrics)
+            # #
+            experiment._log_neptune(**system_metrics)
+            # #
+            if experiment.low_memory:
+                experiment.metrics.train_metrics[e].history = {}
+                experiment.metrics.valid_metrics[e].history = {}
+
+        experiment.verbose = experiment_state_dict['verbose']
+        experiment.fit(train_loader, valid_loader, n_epochs - experiment.epoch - 1)
+
+        return experiment

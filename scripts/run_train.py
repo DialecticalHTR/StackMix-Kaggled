@@ -48,7 +48,7 @@ if __name__ == '__main__':
     parser.add_argument('--seed', type=int, default=6955)
     parser.add_argument('--use_progress_bar', type=int, default=0)
     parser.add_argument('--use_pretrained_backbone', type=int, default=1)
-    parser.add_argument('--save_experiment', action="store_true")
+    parser.add_argument('--save_experiment', action='store_true')
     parser.add_argument('--save_path', type=str, nargs='?', const='')
 
     args = parser.parse_args()
