@@ -50,12 +50,11 @@ if __name__ == '__main__':
     parser.add_argument('--use_pretrained_backbone', type=int, default=1)
 
     args = parser.parse_args()
-    print(args)
 
     assert args.dataset_name in CONFIGS
 
     if args.checkpoint_path:
-        seed = round(datetime.now.now(timezone.utc).timestamp()) % 10000  # warning! in resume need change seed
+        seed = round(datetime.now(timezone.utc).timestamp()) % 10000  # warning! in resume need change seed
     else:
         seed = args.seed
 
