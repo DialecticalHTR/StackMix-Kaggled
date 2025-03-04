@@ -91,7 +91,8 @@ class OCRExperiment(TorchGPUExperiment):
         )
 
         experiment.epoch = experiment_state_dict['epoch']
-        experiment.model.load_state_dict(checkpoint['model_state_dict'])
+
+        experiment.model.load_state_dict(checkpoint['model_state_dict'], strict=False)
         experiment.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
 
         sheduler_dict = checkpoint['scheduler_state_dict']
