@@ -13,6 +13,7 @@ from .ricordi import RicordiConfig
 from .schiller import SchillerConfig
 
 from .cyrillic import CyrillicConfig
+from .dialectic import DialecticConfig
 
 CONFIGS = {
     'bentham': BenthamConfig,
@@ -27,5 +28,6 @@ CONFIGS = {
     'patzig': PatzigConfig,
     'ricordi': RicordiConfig,
     'schiller': SchillerConfig,
-    'cyrillic': CyrillicConfig
+    'cyrillic': CyrillicConfig,
+    'dialectic': DialecticConfig,
 }
