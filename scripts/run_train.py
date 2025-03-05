@@ -215,7 +215,7 @@ if __name__ == '__main__':
         experiment.fit(train_loader, valid_loader, config['num_epochs'])
     else:
         print('RESUMED FROM:', args.checkpoint_path)
-        experiment = OCRExperiment.resume(
+        experiment = OCRExperiment.from_checkpoint(
             checkpoint_path=args.checkpoint_path,
             train_loader=train_loader,
             valid_loader=valid_loader,
