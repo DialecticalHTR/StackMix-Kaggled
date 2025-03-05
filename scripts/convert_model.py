@@ -74,6 +74,8 @@ def main():
     nn.init.zeros_(new_layer.bias.data[old_layer.out_features:])
 
     setattr(experiment.model.classifier, '3', new_layer)
+
+    experiment.optimizer = torch.optim.AdamW(experiment.model.parameters(), **to_config['optimizer']['params'])
     experiment.save(args.output)
 
 if __name__ == '__main__':
