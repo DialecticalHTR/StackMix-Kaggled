@@ -65,7 +65,7 @@ def main():
 
     new_layer = nn.Linear(
         in_features=old_layer.in_features,
-        out_features=len(to_config.chars)
+        out_features=len(to_config.blank + to_config.chars)
     )
     new_layer.weight.data[:old_layer.out_features] = old_layer.weight.data[:]
     new_layer.bias.data[:old_layer.out_features]   = old_layer.bias.data[:]
