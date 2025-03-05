@@ -49,6 +49,7 @@ if __name__ == '__main__':
     parser.add_argument('--use_progress_bar', type=int, default=0)
     parser.add_argument('--use_pretrained_backbone', type=int, default=1)
     parser.add_argument('--save_experiment', action='store_true')
+    parser.add_argument('--janky_hack', action='store_true')
     parser.add_argument('--save_path', type=str, nargs='?', const='')
 
     args = parser.parse_args()
@@ -229,6 +230,13 @@ if __name__ == '__main__':
             neptune=neptune_kwargs.get('neptune'),
             ctc_labeling=ctc_labeling,
         )
+        if args.janky_hack:
+            experiment.scheduler = torch.optim.lr_scheduler.OneCycleLR(
+                experiment.optimizer,
+                epochs=config['num_epochs'],
+                steps_per_epoch=len(train_loader),
+                **config['scheduler']['params'],
+            )
         experiment.fit(train_loader, valid_loader, config['num_epochs'] - experiment.epoch - 1)
     
     if args.save_experiment and args.save_path:
