@@ -8,7 +8,7 @@ class DialecticConfig(BaseConfig):
             data_dir,
             image_w=2048,
             image_h=128,
-            dataset_name='bentham',
+            dataset_name='dialectic',
             chars=' !"%\'()+,-./0123456789:;=?R[]abcehinoprstuxy«»АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЭЮЯабвгдежзийклмнопрстуфхцчшщъыьэюяё№\u0301\u0302\u0304\u0306\u0311‿',
             corpus_name='jigsaw_corpus.txt',
             blank='ß',

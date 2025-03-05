@@ -8,7 +8,7 @@ class CyrillicConfig(BaseConfig):
             data_dir,
             image_w=2048,
             image_h=128,
-            dataset_name='bentham',
+            dataset_name='cyrillic',
             chars=' !"%\'()+,-./0123456789:;=?R[]abcehinoprstuxy«»АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЭЮЯабвгдежзийклмнопрстуфхцчшщъыьэюяё№',
             corpus_name='jigsaw_corpus.txt',
             blank='ß',

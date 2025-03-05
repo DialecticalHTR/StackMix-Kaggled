@@ -229,6 +229,7 @@ if __name__ == '__main__':
             neptune=neptune_kwargs.get('neptune'),
             ctc_labeling=ctc_labeling,
         )
+        experiment.fit(train_loader, valid_loader, config['num_epochs'] - experiment.epoch - 1)
     
     if args.save_experiment and args.save_path:
         experiment.save(args.save_path)

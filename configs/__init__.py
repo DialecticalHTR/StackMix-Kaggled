@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+from typing import Dict
+
+from .base import BaseConfig
+
 from .bentham import BenthamConfig
 from .peter import PeterConfig
 from .iam import IAMConfig
@@ -15,7 +19,7 @@ from .schiller import SchillerConfig
 from .cyrillic import CyrillicConfig
 from .dialectic import DialecticConfig
 
-CONFIGS = {
+CONFIGS: Dict[str, BaseConfig] = {
     'bentham': BenthamConfig,
     'peter': PeterConfig,
     'iam': IAMConfig,
@@ -31,3 +35,7 @@ CONFIGS = {
     'cyrillic': CyrillicConfig,
     'dialectic': DialecticConfig,
 }
+
+__all__ = [
+    'CONFIGS',
+]

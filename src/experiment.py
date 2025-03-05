@@ -2,9 +2,12 @@
 from datetime import datetime, timezone
 
 import torch
+import torch.nn as nn
 from tpu_star.experiment import TorchGPUExperiment
 
 from .metrics import cer, wer, string_accuracy
+from configs import CONFIGS  # noqa
+from src.model import get_ocr_model  # noqa
 
 
 class OCRExperiment(TorchGPUExperiment):
@@ -44,7 +47,7 @@ class OCRExperiment(TorchGPUExperiment):
     # Janky hack attempt
     # https://discuss.pytorch.org/t/lr-scheduler-onecyclelr-causing-tried-to-step-57082-times-the-specified-number-of-total-steps-is-57080/90083/7
     @classmethod
-    def resume(
+    def from_checkpoint(
         cls,
         model,
         optimizer,
@@ -59,7 +62,7 @@ class OCRExperiment(TorchGPUExperiment):
         seed=None,
         **kwargs,
     ):
-        checkpoint = torch.load(checkpoint_path)
+        checkpoint = torch.load(checkpoint_path, map_location=torch.device('cpu'))
         experiment_state_dict = checkpoint['experiment_state_dict']
         neptune_state_dict = checkpoint['neptune_state_dict']
 
@@ -96,7 +99,8 @@ class OCRExperiment(TorchGPUExperiment):
         experiment.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
 
         sheduler_dict = checkpoint['scheduler_state_dict']
-        sheduler_dict['total_steps'] = sheduler_dict['total_steps'] + n_epochs * int(len(train_loader))
+        if train_loader is not None:
+            sheduler_dict['total_steps'] = sheduler_dict['total_steps'] + n_epochs * int(len(train_loader))
         experiment.scheduler.load_state_dict(sheduler_dict)
         experiment.metrics.load_state_dict(checkpoint['metrics_state_dict'])
         experiment.system_metrics.load_state_dict(checkpoint['system_metrics_state_dict'])
@@ -123,6 +127,58 @@ class OCRExperiment(TorchGPUExperiment):
                 experiment.metrics.valid_metrics[e].history = {}
 
         experiment.verbose = experiment_state_dict['verbose']
-        experiment.fit(train_loader, valid_loader, n_epochs - experiment.epoch - 1)
 
         return experiment
+
+    @classmethod
+    def from_cyrillic(
+        cls,
+        model,
+        optimizer,
+        scheduler,
+        criterion,
+        device,
+        checkpoint_path,
+        train_loader,
+        valid_loader,
+        n_epochs,
+        neptune=None,
+        seed=None,
+        **kwargs,
+    ):
+        checkpoint = torch.load(checkpoint_path)
+
+        # _model = get_ocr_model(cyrillic_config, pretrained=True)
+        # _model.load_state_dict(checkpoint['model_state_dict'])
+
+        # for layer in _model.children():
+        #     name = layer._get_name()
+        #     weights = list(layer.parameters())
+        # pretrained = {k: v for k, v in _model.state_dict().items() if k in model.state_dict() and v.shape == model[k].shape}
+
+        # b.update(pretrained)
+        # model.load_state_dict(b)
+
+        # model["classifier.3.weight"][:110] = _model["classifier.3.weight"]
+        # model["classifier.3.bias"][:110] = _model["classifier.3.bias"]
+
+        # nn.init.xavier_uniform_(model["classifier.3.weight"][110:])
+        # nn.init.zeros_(model["classifier.3.bias"][110:])
+
+        # del _model
+        # del pretrained
+
+        cls.resume(
+            model,
+            optimizer,
+            scheduler,
+            criterion,
+            device,
+            checkpoint_path,
+            train_loader,
+            valid_loader,
+            n_epochs,
+            neptune=None,
+            seed=None,
+            **kwargs,
+        )
