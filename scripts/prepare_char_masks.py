@@ -33,6 +33,7 @@ if __name__ == '__main__':
     parser.add_argument('--data_dir', type=str)
     parser.add_argument('--char_masks_add', type=int, default=0)
     parser.add_argument('--char_masks_blank_add', type=int, default=0)
+    parser.add_argument('--save_path', type=str, nargs='?', const='')
 
     args = parser.parse_args()
 
@@ -47,6 +48,11 @@ if __name__ == '__main__':
         bs=args.bs,
         num_workers=args.num_workers,
     )
+
+    save_path = args.save_path
+    if not save_path:
+        save_path = f'{config.data_dir}/{config.dataset_name}/all_char_masks.json'
+    print(save_path)
 
     device = torch.device('cuda:0') if torch.cuda.is_available() else torch.device('cpu')
     print('DEVICE:', device)
@@ -87,7 +93,7 @@ if __name__ == '__main__':
         blank_add=args.char_masks_blank_add
     ).run(train_inference)
 
-    with open(f'{config.data_dir}/{config.dataset_name}/all_char_masks.json', 'w') as file:
+    with open(save_path, 'w') as file:
         json.dump(all_masks, file)
 
     print('GOOD MASKS:', len(all_masks))
