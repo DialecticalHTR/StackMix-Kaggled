@@ -33,7 +33,7 @@ class CharMasks:
                 if not masks:
                     continue
                 all_masks.append({
-                    'id': sample['id'],
+                    'id': int(sample['id']),
                     'mask': masks
                 })
             else:
