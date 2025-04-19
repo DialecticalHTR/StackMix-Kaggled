@@ -17,7 +17,7 @@ from .ricordi import RicordiConfig
 from .schiller import SchillerConfig
 
 from .cyrillic import CyrillicConfig
-from .dialectic import DialecticConfig
+from .dialectic import DialecticConfig, OldDialecticConfig
 
 CONFIGS: Dict[str, BaseConfig] = {
     'bentham': BenthamConfig,
@@ -34,6 +34,7 @@ CONFIGS: Dict[str, BaseConfig] = {
     'schiller': SchillerConfig,
     'cyrillic': CyrillicConfig,
     'dialectic': DialecticConfig,
+    'dialectic_old': OldDialecticConfig,
 }
 
 __all__ = [
